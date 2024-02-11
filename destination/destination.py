@@ -20,7 +20,7 @@ def handler(conn: dict = None) -> None:
                 data.replace("'", '"')
 
             json_data = json.loads(received_data)
-            print("-" * 70)
+            print("-" * 80)
             print(
                 f"data receive => packet : {json_data['packet']} data length : {len(json_data['data'])} , data : {json_data['data']} weight : {json_data['weight']} at {time()}"
             )
