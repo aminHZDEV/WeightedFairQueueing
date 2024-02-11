@@ -7,8 +7,16 @@ from time import time
 import traceback
 
 
+def setup():
+    config_path = os.path.join(os.path.abspath(os.path.join("config.ini")))
+    config = configparser.ConfigParser()
+    config.read(config_path)
+    return config
+
+
 def handler(conn: dict = None) -> None:
     data = ""
+    config = setup()
     while True:
         try:
             received_data = conn["conn"].recv(4048).decode()
@@ -21,9 +29,13 @@ def handler(conn: dict = None) -> None:
 
             json_data = json.loads(received_data)
             print("-" * 80)
-            print(
-                f"data receive => packet : {json_data['packet']} data length : {len(json_data['data'])} , data : {json_data['data']} weight : {json_data['weight']} at {time()}"
-            )
+            result = f"data receive in destination => packet : {json_data['packet']} data length : {len(json_data['data'])} , data : {json_data['data']} weight : {json_data['weight']} at {time()}"
+            print(result)
+            with open(
+                os.path.join(config["CONFIGS"]["result_Address"], "result.csv"), "a"
+            ) as f:
+                f.write(result + "\n")
+
             data = ""
         except Exception as e:
             print(e)
@@ -32,11 +44,10 @@ def handler(conn: dict = None) -> None:
 
 def destination() -> None:
     # get the hostname
-    config_path = os.path.join(os.path.abspath(os.path.join("config.ini")))
-    config = configparser.ConfigParser()
-    config.read(config_path)
+    config = setup()
     host = socket.gethostname()
     server_socket = socket.socket()
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_port = int(config["CONFIGS"]["destination_port"])
     source_amount = int(config["CONFIGS"]["router_amount"])
     server_socket.bind((host, server_port))

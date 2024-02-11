@@ -50,6 +50,7 @@ def setup_destination() -> socket:
     host = socket.gethostname()
     destination_port = int(config["CONFIGS"]["destination_port"])
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.connect((host, destination_port))
     return s
 
@@ -61,6 +62,7 @@ def server_program() -> None:
     config.read(config_path)
     host = socket.gethostname()
     server_socket = socket.socket()
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_port = int(config["CONFIGS"]["router_port"])
     source_amount = int(config["CONFIGS"]["source_amount"])
     server_socket.bind((host, server_port))

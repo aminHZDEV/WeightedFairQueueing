@@ -7,6 +7,7 @@ import time
 import threading
 import glob
 
+
 def send_data_with_time(
     s: socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM),
     data: str = "",
@@ -34,14 +35,15 @@ def setup() -> Tuple[str, int, list]:
     config_path = os.path.join(os.path.abspath(os.path.join("config.ini")))
     config = configparser.ConfigParser()
     config.read(config_path)
-    csv_files = glob.glob(os.path.join(config["CONFIGS"]["csv_address"], 'data_*_*.csv'))
+    csv_files = glob.glob(
+        os.path.join(config["CONFIGS"]["csv_address"], "data_*_*.csv")
+    )
     source_csv_address_list = []
 
     for item in csv_files:
-        source_csv_address_list.append({
-            "addr": item,
-            "weight": os.path.basename(item).split("_")[2].split(".")[0]
-        })
+        source_csv_address_list.append(
+            {"addr": item, "weight": os.path.basename(item).split("_")[2].split(".")[0]}
+        )
     return (
         socket.gethostname(),
         int(config["CONFIGS"]["router_port"]),
@@ -68,6 +70,7 @@ threads = []
 sockets = []
 for data in data_list:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.connect((host, destination_port))
     sockets.append(s)
     if isinstance(data, dict):
@@ -87,5 +90,3 @@ for thread in threads:
 
 for s in sockets:
     s.close()
-
-
