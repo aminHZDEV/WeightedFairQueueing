@@ -65,7 +65,6 @@ def read_csv_files(source_csv_address_list: list = None) -> list:
 host, destination_port, source_csv_address_list = setup()
 data_list = read_csv_files(source_csv_address_list=source_csv_address_list)
 
-
 threads = []
 sockets = []
 for data in data_list:

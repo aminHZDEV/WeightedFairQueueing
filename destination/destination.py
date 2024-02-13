@@ -3,9 +3,8 @@ import threading
 import socket
 import configparser
 import json
-from time import time
+from datetime import datetime
 import traceback
-
 
 def setup():
     config_path = os.path.join(os.path.abspath(os.path.join("config.ini")))
@@ -29,7 +28,7 @@ def handler(conn: dict = None) -> None:
 
             json_data = json.loads(received_data)
             print("-" * 80)
-            result = f"data receive in destination => packet : {json_data['packet']} data length : {len(json_data['data'])} , data : {json_data['data']} weight : {json_data['weight']} at {time()}"
+            result = f"data receive in destination => packet : {json_data['packet']} data length : {len(json_data['data'])} , data : {json_data['data']} weight : {json_data['weight']} at {datetime.now().strftime('%H:%M:%S')}"
             print(result)
             with open(
                 os.path.join(config["CONFIGS"]["result_Address"], "result.csv"), "a"
